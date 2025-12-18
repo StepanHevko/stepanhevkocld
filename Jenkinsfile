@@ -4,7 +4,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Docker image...'
-                // Замініть 'stepanapp' 
+              
                 sh 'docker build -t stepanapp:latest .'
             }
         }
