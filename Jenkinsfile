@@ -4,7 +4,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Docker image...'
-                sh 'docker build -t myapp:latest .'
+                // Замініть 'stepanapp' 
+                sh 'docker build -t stepanapp:latest .'
             }
         }
         stage('Test') {
@@ -15,8 +16,13 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo 'Deploy stage (локально)'
-                sh 'docker images'
+                echo 'Pushing Docker image to DockerHub...'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    // Замініть 'stepanapp' на назву вашого репо в обох рядках
+                    sh 'docker tag stepanapp:latest $DOCKER_USER/stepanapp:latest'
+                    sh 'docker push $DOCKER_USER/stepanapp:latest'
+                }
             }
         }
     }
